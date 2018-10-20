@@ -18,7 +18,7 @@ def get_airport(code):
     Parameter
     ---------
     code
-        type str, airport code.
+        type str; airport code.
 
     Return
     ------
@@ -68,3 +68,16 @@ def get_cities():
 
     return _cities
 
+def get_cities_names():
+    """Returns a list of all the city names.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    list
+        a list of possible cities.
+    """
+    return list(get_cities().keys())
