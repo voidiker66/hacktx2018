@@ -1,17 +1,12 @@
 import requests
-response = requests.get(
-    "https://www.eventbriteapi.com/v3/events/search?location.address=London,UnitedKingdom",
-    headers = {
-        "Authorization": "Bearer 7PW4452MWTLYVZVWNH3K",
-    },
-    verify = True,  # Verify SSL certificate
-)
-j = response.json()
-for e in j['events']:
-	print(e['name']['text'])
-	print(e['start']['local'] + ' - ' + e['end']['local'])
-	if e['is_free']:
-		print('Free')
-	else:
-		print(e['fee'])
-	quit()
+import datetime
+
+def get_time_utc(time):
+	return str(datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S').strftime("%B %d, %Y at %H:%M"))
+def get_events(latitude, longitude):
+	return requests.get(
+	    "https://api.sandbox.amadeus.com/v1.2/points-of-interest/yapq-search-circle?apikey=rBYxMyKDkSqumoGZthxpnBZyHbwSTd0o&latitude=" + latitude + "&longitude=" + longitude + "&radius=42&lang=EN",
+	    verify = True,  # Verify SSL certificate
+	)
+j = get_events(str(49.10), str(-123.11934)).json()
+print(j)

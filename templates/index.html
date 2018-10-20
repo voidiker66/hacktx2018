@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block body %}
+<div class="w-full max-w-xs mx-auto">
+    <form action="" method="post" novalidate class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+            <p>
+                {{ form.budget.label(class_='block text-grey-darker text-sm font-bold') }}<br>
+                {{ form.budget(size=32, class_='shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
+            </p>
+            <p>
+                {{ form.start.label(class_='block text-grey-darker text-sm font-bold') }}<br>
+                {{ form.start(size=32, class_='datepicker shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
+            </p>
+            <p>	
+                {{ form.end.label(class_='block text-grey-darker text-sm font-bold') }}<br>
+                {{ form.end(size=32, class_='datepicker shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
+            </p>
+        </div>
+            
+        <div class="flex items-center justify-between">
+            {{ form.submit(class_='bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline')  }}
+        </div>
+    </form>
+    <p class="text-center text-grey text-xs">
+    ©2018 Dream Vacation. All rights reserved.
+  </p>
+</div>
+<script type="text/javascript">
+	$(function() {
+		$( ".datepicker" ).each(function() { 
+			console.log($(this))
+			$(this).datepicker() 
+		});
+	});
+
+</script>
+{% endblock %}

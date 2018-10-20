@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block body %}
+{% block content %}
+
+{% for item in data %}
+	<div class="location-container">
+		<h3>{{ item['location']['augmented_location']['city'] }}, {{ item['location']['augmented_location']['country'] }}</h3>
+		<p>
+			{% if item['events']|length > 5 %}
+				{% for index in range(5) %}
+					<ul>
+						<li>
+							{{ item['events'][index]['name']['text'] }}
+						</li>
+					</ul>
+				{% endfor %}
+			{% else %}
+				{% for event in item['events'] %}
+					<ul>
+						<li>
+							{{ event['name']['text'] }}
+						</li>
+					</ul>
+				{% endfor %}
+			{% endif %}
+		</p>
+	</div>
+{% endfor %}
+
+{% endblock %}
+{% endblock %}
