@@ -12,14 +12,10 @@
     color: #797979;
     font-size: 25px;
     text-align: center;
-    margin-top: 100px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 3%;
     width: 700px;
   }
   #destTable {
-    margin-top: 20px;
-    border-spacing: 10px 10px;
     width: 100%;
   }
   #destTable td {
@@ -30,21 +26,47 @@
   #destTable th {
     padding: 5px 0px 12px;
   }
+  #retFlights{
+    background: #f4f4f4;
+    border-radius: 4px;
+    padding: 20px;
+    color: #797979;
+    font-size: 25px;
+    text-align: center;
+    margin-left: 53%;
+    width: 700px;
+  }
+  #retTable {
+    width: 100%;
+  }
+  #retTable td {
+    background: #fff;
+    border-bottom: none !important;
+    padding: 12px 0px 12px;
+  }
+  #retTable th {
+    padding: 5px 0px 12px;
+  }
 </style>
 
+<form action="" method="post" enctype="multipart/form-data">
 <div id="destFlights" class="flex">
+  <h2 style="text-align:center">Departure Flight</h2>
   {% if flights %}
   <table id='destTable'>
     <tr>
       <th></th>
-	  <th onclick="sortTable(1)" style="cursor: pointer">Flight #</th>
-	  <th onclick="sortTable(2)" style="cursor: pointer">Departure</th>
-	  <th onclick="sortTable(3)" style="cursor: pointer">Arrival</th>
-	  <th onclick="sortTable(4)" style="cursor: pointer">Price</th>
+	  <th onclick="sortTable(1, 'destTable')" style="cursor: pointer">Flight #</th>
+	  <th onclick="sortTable(2, 'destTable')" style="cursor: pointer">Departure</th>
+	  <th onclick="sortTable(3, 'destTable')" style="cursor: pointer">Arrival</th>
+	  <th onclick="sortTable(4, 'destTable')" style="cursor: pointer">Price</th>
     </tr>
     {% for flight in flights %}
     <tr>
-      <td style="padding: 0px 10px"><input type="radio" name="pick" value="1"/></td>
+      <td style="padding: 0px 10px">
+        <input type="radio" name="pickDest" value="{{ flight | tojson | safe }}"
+         onselect="disableTable({{ flight['arrivalTime'] }})">
+      </td>
       <td>{{ flight['flightNumber'] }}</td>
 	  <td>{{ flight['departureTime'] }}</td>
       <td>{{ flight['arrivalTime'] }}</td>
@@ -52,12 +74,14 @@
     </tr>
     {% endfor %}
   </table>
-  
+  {% else %}
+  <h3>There are currently no destination flights.</h3>
+  {% endif %}
   <script>
     var dir = "asc";
     var last = -1;
-    function sortTable(n) {
-      var table = document.getElementById("destTable");
+    function sortTable(n, tablename) {
+      var table = document.getElementById(tablename);
       var rows = table.rows;
       var min;
       if (n == last) {
@@ -91,8 +115,49 @@
       }
     }
   </script>
+</div>
+
+<div id="retFlights">
+  <h2 style="text-align:center">Departure Flight</h2>
+  {% if retFlights %}
+  <table id='retTable'>
+    <tr>
+      <th></th>
+	  <th onclick="sortTable(1, 'retTable')" style="cursor: pointer">Flight #</th>
+	  <th onclick="sortTable(2, 'retTable')" style="cursor: pointer">Departure</th>
+	  <th onclick="sortTable(3, 'retTable')" style="cursor: pointer">Arrival</th>
+	  <th onclick="sortTable(4, 'retTable')" style="cursor: pointer">Price</th>
+    </tr>
+    {% for flight in retFlights %}
+    <tr>
+      <td style="padding: 0px 10px">
+        <input type="radio" name="retDest" value="{{ flight | tojson | safe }}">
+      </td>
+      <td>{{ flight['flightNumber'] }}</td>
+	  <td>{{ flight['departureTime'] }}</td>
+      <td>{{ flight['arrivalTime'] }}</td>
+      <td style="padding: 0px 10px">{{ flight['cost'] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
   {% else %}
   <h3>There are currently no destination flights.</h3>
   {% endif %}
+  <script>
+    function disableTable(datestr) {
+      var table = document.getElementById('retTable');
+      var rows = table.rows;
+      var lower = datestr.toLowerCase();
+      const STARTLOC = 2;
+      const RADIOLOC = 0;
+      for (var i = 1; i < rows.length; i++) {
+        if (rows[i][STARTLOC].toLowerCase() < lower) {
+          rows[i][RADIOLOC].disabled = true;
+          rows[i][RADIOLOC].checked = false;
+        }
+      }
+    }
+  </script>
 </div>
+</form>
 {% endblock %}
