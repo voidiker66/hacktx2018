@@ -16,7 +16,7 @@ import uuid
 import requests
 import datetime
 
-import flight
+import airlines
 
 app = Flask(__name__)
 
@@ -63,7 +63,7 @@ class SearchForm(Form):
 @app.route('/', methods=['GET', 'POST'])
 def home():
 	form = SearchForm()
-	form.cities.choices = [(city, city) for city in flight.get_cities_names()]
+	form.cities.choices = [(city, city) for city in airlines.get_cities_names()]
 	form.currency.choices = [(cur, cur) for cur in get_currency()]
 	if form.validate_on_submit():
 		if form.validate():
@@ -77,7 +77,7 @@ def home():
 def dash():
 	start = request.args.get('start')
 	end = request.args.get('end')
-	locations = flight.get_cities_names()
+	locations = airlines.get_cities_names()
 	dashdata = list()
 	for location in locations:
 		events = get_events(location, start, end).json()
