@@ -5,7 +5,23 @@ Login
 {% endblock %}
 
 {% block body %}
-<div class="w-full max-w-xs mx-auto">
+<style type="text/css">
+    a div span, nav div div a, nav div div span {
+        color: #000000 !important;
+    }
+    nav div div a {
+        border-color: #000000 !important;
+    }
+    nav div div a:hover {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+    nav {
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="w-full max-w-md mx-auto flex justify-around pt-16">
     <form action="" method="post" novalidate class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         {{ form.hidden_tag() }}
         <div class="mb-4">
@@ -25,9 +41,9 @@ Login
                 Forgot Password?
             </a>
         </div>
+        <p class="text-center text-grey text-xs pt-8">
+            ©2018 Dream Vacation. All rights reserved.
+        </p>
     </form>
-    <p class="text-center text-grey text-xs">
-    ©2018 EvoLution. All rights reserved.
-  </p>
 </div>
 {% endblock %}
