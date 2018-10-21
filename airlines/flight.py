@@ -1,83 +1,126 @@
-import enum
+import datetime as dt
+import pytz
 import requests
 
-# Possible airport codes for current project
-class AIRPORTS(enum.Enum):
-    DFW = 1
-    LAX = 2
-    MIA = 3
-    PHL = 4
-    ORD = 5
-    JFK = 6
-    LHR = 7
-    HKG = 8
+import airlines.airport as apt
 
-def get_airport(code):
-    """get airport information from airport code.
+def datetime_parser(datetime):
+    if datetime[-1] == 'Z':
+        datetime = dt.datetime.strptime(datetime, "%Y-%m-%dT%H:%MZ")
+        datetime = datetime.replace(tzinfo=dt.timezone.utc)
+    else:
+        a, b, c = datetime.rpartition(':')
+        datetime = a + c
+        datetime = dt.datetime.strptime(datetime, "%Y-%m-%dT%H:%M%z")
+    return datetime
 
-    Parameter
-    ---------
-    code
-        type str; airport code.
+def to_utc(datetime):
+    return datetime.astimezone(pytz.utc)
 
-    Return
-    ------
-    dict
-        airport information in the form of a dict.
-    """
+####### Use these functions to serialize time and deserialize time #######
+def datetime_to_utcstring(datetime):
+    datetime = to_utc(datetime)
+    return datetime.strftime("%Y-%m-%dT%H:%M%z")
 
-    if not isinstance(code, str):
-        raise TypeError("'code' argument should be of type str")
+def utcstring_to_datetime(datetime_str):
+    return dt.datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M%z")
+##########################################################################
 
-    r = requests.get('https://mock-aa.herokuapp.com/airports?code=' + code)
+def get_flights(origin_code, destination_code, date):
+    if not origin_code in apt.AIRPORTS.__members__:
+        raise ValueError("origin is not a valid airport code.")
+    if not destination_code in apt.AIRPORTS.__members__:
+        raise ValueError("destination is not a valid airport code.")
+    r = requests.get('https://mock-aa.herokuapp.com/docs/flights?origin='
+        + origin_code + "&destination=" + destination_code + "&date="
+        + date)
     if r.status_code != 200:
-        raise ValueError("Failed request: " + str(r.status_code))
-    info = r.json()
-    size = len(info)
-    if not size:
-        raise ValueError("No return airport values.")
-    if len(info) != 1:
-        raise ValueError("Invalid return airport values.")
-    return info[0]
+        raise ValueError("failed to get flights.")
+    return r.json()
 
-def get_cities():
-    """Returns a dict of possible cities and their information.
+def get_dest_flights(origin, destination, start_date,
+        duration_days, count_limit=10):
+    """Returns a list of flights
 
     Parameters
     ----------
-    None
-
-    Returns
-    -------
-    dict
-        a dict of possible cities and their information.
-    """
-
-    global _cities
-    try:
-        if _cities:
-            return _cities
-    except NameError:
-        pass
-
-    _cities = {}
-    for airport in AIRPORTS:
-        airport_code = airport.name
-        info = get_airport(airport_code)
-        _cities[info['city']] = info
-
-    return _cities
-
-def get_cities_names():
-    """Returns a list of all the city names.
-
-    Parameters
-    ----------
-    None
+    origin
+        type str; start location for the flight
+    destination
+        type str; end location for the flight
+    start_date
+        type str; earliest start date for the flight in 'yyyy-mm-dd' format
+    duration_days:
+        type int; duration of the trip
+    count_limit
+        type int; maximum number of flights
 
     Returns
     -------
     list
-        a list of possible cities.
+        a list of possible flights from origin to destination within the
+        duration_days, with a size of count_limit or less
     """
-    return list(get_cities().keys())
+    flights = []
+
+    # TODO: should our list of possible flights start from datetime now.
+    current_dt = dt.datetime.strptime(start_date, "%Y-%m-%d") \
+        .replace(tzinfo=dt.timezone.utc)
+    end_dt = current_dt + dt.timedelta(days=duration_days + 1)
+    ###################################################################
+
+    origin_code = apt.get_airport_code(origin)
+    destination_code = apt.get_airport_code(destination)
+    while duration_days > 0 and count_limit > 0:
+        possible_flights = get_flights(origin_code, destination_code, \
+            current_dt.strftime("%Y-%m-%d"))
+
+        for flight in possible_flights:
+            depart_time = datetime_parser(flight['departureTime'])
+            flight['departureUTCTime'] = datetime_to_utcstring(depart_time)
+            arrival_time = datetime_parser(flight['arrivalTime'])
+            flight['arrivalUTCTime'] = datetime_to_utcstring(arrival_time)
+
+            if depart_time >= current_dt and arrival_time < end_dt \
+                    and count_limit > 0:
+                flights.append(flight)
+                count_limit -= 1
+
+        current_dt += dt.timedelta(days=1)
+        duration_days -= 1
+
+    return flights
+
+def get_return_flights(origin, destination, start_date,
+        duration_days, count_limit=10):
+
+    flights = []
+
+    # TODO: should our list of possible flights start from datetime now.
+    current_dt = dt.datetime.strptime(start_date, "%Y-%m-%d") \
+        .replace(tzinfo=dt.timezone.utc)
+    end_dt = current_dt + dt.timedelta(days=duration_days)
+    ###################################################################
+
+    origin_code = apt.get_airport_code(origin)
+    destination_code = apt.get_airport_code(destination)
+    while duration_days > 0 and count_limit > 0:
+        possible_flights = get_flights(origin_code, destination_code, \
+            end_dt.strftime("%Y-%m-%d"))
+
+        for flight in possible_flights:
+            depart_time = datetime_parser(flight['departureTime'])
+            flight['departureUTCTime'] = datetime_to_utcstring(depart_time)
+            arrival_time = datetime_parser(flight['arrivalTime'])
+            flight['arrivalUTCTime'] = datetime_to_utcstring(arrival_time)
+
+            if depart_time >= current_dt and arrival_time < (end_dt + dt.timedelta(days=1)) \
+                    and count_limit > 0:
+                flights.append(flight)
+                count_limit -= 1
+
+        current_dt += dt.timedelta(days=-1)
+        duration_days -= 1
+
+    return flights
+
