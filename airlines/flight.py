@@ -24,6 +24,10 @@ def datetime_to_utcstring(datetime):
 
 def utcstring_to_datetime(datetime_str):
     return dt.datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M%z")
+
+def datetime_to_cststring(datetime):
+    datetime = datetime.astimezone(pytz.timezone('America/Chicago'))
+    return datetime.strftime("%Y-%m-%d %H:%M")
 ##########################################################################
 
 def get_flights(origin_code, destination_code, date):
@@ -124,3 +128,17 @@ def get_return_flights(origin, destination, start_date,
 
     return flights
 
+def get_flights_view(flights):
+    flights_view = []
+    for flight in flights:
+        flight_view = {}
+        flight_view['flightNumber'] = flight['flightNumber']
+        flight_view['departureTime'] = datetime_to_cststring(
+            utcstring_to_datetime(flight['departureUTCTime']))
+        flight_view['arrivalTime'] = datetime_to_cststring(
+            utcstring_to_datetime(flight['arrivalUTCTime']))
+        flight_view['cost'] = flight['cost']
+        flight_view['date'] = datetime_parser(flight['departureTime']) \
+            .strftime('%Y-%m-%d')
+        flights_view.append(flight_view)
+    return flights_view
