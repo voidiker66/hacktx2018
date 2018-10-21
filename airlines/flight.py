@@ -43,7 +43,7 @@ def get_flights(origin_code, destination_code, date):
     return r.json()
 
 def get_dest_flights(origin, destination, start_date,
-        duration_days, count_limit=10):
+        end_date, count_limit=10):
     """Returns a list of flights
 
     Parameters
@@ -53,9 +53,9 @@ def get_dest_flights(origin, destination, start_date,
     destination
         type str; end location for the flight
     start_date
-        type str; earliest start date for the flight in 'yyyy-mm-dd' format
-    duration_days:
-        type int; duration of the trip
+        type str; earliest start date for the flight in 'yyyy-mm-ddTHH:MM:SS' format
+    end_date:
+        type str; end date for the trip in 'yyyy-mm-ddTHH:MM:SS' format
     count_limit
         type int; maximum number of flights
 
@@ -68,18 +68,54 @@ def get_dest_flights(origin, destination, start_date,
     flights = []
 
     # TODO: should our list of possible flights start from datetime now.
-    current_dt = dt.datetime.strptime(start_date, "%Y-%m-%d") \
+    current_dt = dt.datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S") \
         .replace(tzinfo=dt.timezone.utc)
-    end_dt = current_dt + dt.timedelta(days=duration_days + 1)
+    iter_dt = current_dt
+    end_dt = dt.datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S") \
+        .replace(tzinfo=dt.timezone.utc)
     ###################################################################
 
     origin_code = apt.get_airport_code(origin)
     destination_code = apt.get_airport_code(destination)
-    while duration_days > 0 and count_limit > 0:
+    while iter_dt < end_dt and count_limit > 0:
         possible_flights = get_flights(origin_code, destination_code, \
-            current_dt.strftime("%Y-%m-%d"))
+            iter_dt.strftime("%Y-%m-%d"))
 
         for flight in possible_flights:
+            depart_time = datetime_parser(flight['departureTime'])
+            flight['departureUTCTime'] = datetime_to_utcstring(depart_time)
+            arrival_time = datetime_parser(flight['arrivalTime'])
+            flight['arrivalUTCTime'] = datetime_to_utcstring(arrival_time)
+
+            if depart_time >= current_dt and arrival_time <= end_dt \
+                    and count_limit > 0:
+                flights.append(flight)
+                count_limit -= 1
+
+        iter_dt += dt.timedelta(days=1)
+
+    return flights
+
+def get_return_flights(origin, destination, start_date,
+        end_date, count_limit=10):
+
+    flights = []
+
+    # TODO: should our list of possible flights start from datetime now.
+    current_dt = dt.datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S") \
+        .replace(tzinfo=dt.timezone.utc)
+    end_dt = dt.datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S") \
+        .replace(tzinfo=dt.timezone.utc) + dt.timedelta(seconds=1)
+    iter_dt = end_dt - dt.timedelta(seconds=1)
+    ###################################################################
+
+    origin_code = apt.get_airport_code(origin)
+    destination_code = apt.get_airport_code(destination)
+    while current_dt < iter_dt and count_limit > 0:
+        possible_flights = get_flights(origin_code, destination_code, \
+            iter_dt.strftime("%Y-%m-%d"))
+
+        for flight in reversed(possible_flights):
             depart_time = datetime_parser(flight['departureTime'])
             flight['departureUTCTime'] = datetime_to_utcstring(depart_time)
             arrival_time = datetime_parser(flight['arrivalTime'])
@@ -90,41 +126,7 @@ def get_dest_flights(origin, destination, start_date,
                 flights.append(flight)
                 count_limit -= 1
 
-        current_dt += dt.timedelta(days=1)
-        duration_days -= 1
-
-    return flights
-
-def get_return_flights(origin, destination, start_date,
-        duration_days, count_limit=10):
-
-    flights = []
-
-    # TODO: should our list of possible flights start from datetime now.
-    current_dt = dt.datetime.strptime(start_date, "%Y-%m-%d") \
-        .replace(tzinfo=dt.timezone.utc)
-    end_dt = current_dt + dt.timedelta(days=duration_days)
-    ###################################################################
-
-    origin_code = apt.get_airport_code(origin)
-    destination_code = apt.get_airport_code(destination)
-    while duration_days > 0 and count_limit > 0:
-        possible_flights = get_flights(origin_code, destination_code, \
-            end_dt.strftime("%Y-%m-%d"))
-
-        for flight in possible_flights:
-            depart_time = datetime_parser(flight['departureTime'])
-            flight['departureUTCTime'] = datetime_to_utcstring(depart_time)
-            arrival_time = datetime_parser(flight['arrivalTime'])
-            flight['arrivalUTCTime'] = datetime_to_utcstring(arrival_time)
-
-            if depart_time >= current_dt and arrival_time < (end_dt + dt.timedelta(days=1)) \
-                    and count_limit > 0:
-                flights.append(flight)
-                count_limit -= 1
-
-        current_dt += dt.timedelta(days=-1)
-        duration_days -= 1
+        iter_dt -= dt.timedelta(days=1)
 
     return flights
 
