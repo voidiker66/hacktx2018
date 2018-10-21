@@ -140,7 +140,6 @@ def get_flights_view(flights):
         flight_view['arrivalTime'] = datetime_to_cststring(
             utcstring_to_datetime(flight['arrivalUTCTime']))
         flight_view['cost'] = flight['cost']
-        flight_view['date'] = datetime_parser(flight['departureTime']) \
-            .strftime('%Y-%m-%d')
+        flight_view['mongoid'] = flight['_id']
         flights_view.append(flight_view)
     return flights_view
