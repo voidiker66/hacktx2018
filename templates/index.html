@@ -5,39 +5,94 @@ Home
 {% endblock %}
 
 {% block body %}
-<div class="w-full max-w-xs mx-auto">
-    <form action="" method="post" novalidate class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        {{ form.hidden_tag() }}
-        <div class="mb-4">
-            <p>
-                {{ form.budget.label(class_='block text-grey-darker text-sm font-bold') }}<br>
-                {{ form.budget(size=32, class_='shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
-            </p>
-            <p>
-                {{ form.start.label(class_='block text-grey-darker text-sm font-bold') }}<br>
-                {{ form.start(size=32, class_='datepicker shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
-            </p>
-            <p>	
-                {{ form.end.label(class_='block text-grey-darker text-sm font-bold') }}<br>
-                {{ form.end(size=32, class_='datepicker shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
-            </p>
-        </div>
-            
-        <div class="flex items-center justify-between">
-            {{ form.submit(class_='bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline')  }}
-        </div>
-    </form>
-    <p class="text-center text-grey text-xs">
-    ©2018 Dream Vacation. All rights reserved.
-  </p>
+
+{% block header %}
+
+<div class="dream-header">
+    <div class="align-middle header-content">
+            <h1>Dream Vacation</h1>
+            <h3><span class="line-right header-span">Think</span> | <span class="line-right header-span">Click</span> | <span class="header-span">Go</span></h3>
+    </div>
 </div>
+
+{% endblock %}
+<div class="items-stretch">
+    <div class="w-1/3 inline-flex">
+        <form action="" method="post" enctype="multipart/form-data" class="bg-white rounded px-8 pt-6 pb-8 mb-4">
+            {{ form.hidden_tag() }}
+            <div class="mb-4 items-stretch">
+                <p>
+                    <!-- {{ form.cities.label(class_='block text-grey-darker text-sm font-bold') }}<br> -->
+                    {{ form.cities(size=5, class_='chosen-select block appearance-none w-4/5 bg-white border border-grey-light px-4 py-2 pr-8 rounded leading-tight focus:outline-none h-10') }}
+                </p>
+                <p>
+                    <!-- {{ form.budget.label(class_='block text-grey-darker text-sm font-bold') }}<br> -->
+                    {{ form.currency(size=1, class='mt-5 appearance-none border rounded w-1/5 py-2 px-3 text-grey-darker leading-tight focus:outline-none mb-2 inline-flex h-10') }}
+                    {{ form.budget(size=32, class_='mt-5 appearance-none border rounded w-3/5 py-2 px-3 text-grey-darker leading-tight focus:outline-none mb-2 inline-flex h-10', placeholder="$ Budget") }}
+                </p>
+                <p>
+                    <!-- {{ form.start.label(class_='block text-grey-darker text-sm font-bold') }}<br> -->
+                    {{ form.start(size=32, class_='datepicker mt-5 appearance-none border rounded py-2 px-3 text-grey-darker leading-tight focus:outline-none mb-2 h-10 w-2/5') }}
+                    <!-- {{ form.end.label(class_='block text-grey-darker text-sm font-bold') }}<br> -->
+                    {{ form.end(size=32, class_='datepicker mt-5 appearance-none border rounded py-2 px-3 text-grey-darker leading-tight focus:outline-none mb-2 h-10 w-2/5') }}
+                </p>
+            </div>
+                
+            <div class="w-4/5 text-center">
+                {{ form.submit(class_='bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline h-10')  }}
+            </div>
+        </form>
+    </div>
+    <div class="w-3/5 inline-flex dreamer-main-content">
+        <ul>
+            <li class="mt-4">
+                <h4 class="text-base">
+                    Plan trips. Fast.
+                </h4>
+                <p class="text-sm mb-6">
+                    <i>Enter details. Click Let's Go! Select from a variety of destinations specially planned for you.</i>
+                </p>
+            </li>
+            <li class="mt-4">
+                <h4 class="text-base">
+                    Customize
+                </h4>
+                <p class="text-sm mb-6">
+                    <i>Add, modify, and update details to customize suggestions and itinerary.</i>
+                </p>
+            </li>
+            <li class="mt-4">
+                <h4 class="text-base">
+                    Book
+                </h4>
+                <p class="text-sm mb-6">
+                    <i>Select flights according to your preferences and book at the click of a button.</i>
+                </p>
+            </li>
+            <li class="mt-4">
+                <h4 class="text-base">
+                    Real-time Itinerary Update.
+                </h4>
+                <p class="text-sm mb-6">
+                    <i>Overslept on the first day of vacation? The itinerary updates to meet your needs.</i>
+                </p>
+            </li>
+    </div>
+</div>  
 <script type="text/javascript">
 	$(function() {
 		$( ".datepicker" ).each(function() { 
-			console.log($(this))
 			$(this).datepicker() 
 		});
 	});
+
+    $('.chosen-select').chosen({}).change( function(obj, result) {
+    console.debug("changed: %o", arguments);
+    
+    console.log("selected: " + result.selected);
+    });
+
+    document.getElementsByClassName('chosen-default')[0].children[0].innerHTML = "Starting City";
 
 </script>
 {% endblock %}

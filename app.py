@@ -17,6 +17,8 @@ import uuid
 import requests
 import datetime
 
+import flight
+
 app = Flask(__name__)
 
 app.config.update(dict(
@@ -24,8 +26,8 @@ app.config.update(dict(
 	WTF_CSRF_SECRET_KEY="a csrf secret key"
 ))
 
-def getLocations():
-	return ['london, england', 'austin, texas', 'cancun, mexico']
+def get_currency():
+	return ['USD', 'EUR', 'CNY']
 
 def time_utc_to_english(time):
 	return datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S').strftime("%B %d, %Y at %H:%M")
@@ -43,6 +45,8 @@ def get_events(location, start, end):
 
 class SearchForm(Form):
 	budget = TextField('Budget', [validators.Required()], id='select_budget')
+	currency = SelectField('Currency', [validators.Required()], id='select_currency', default="Currency")
+	cities = SelectField('Departure City', validators=[validators.Required()], id='select_cities')
 	start = DateField('Start', validators=[validators.Required()], id='select_start', format='%m/%d/%Y', default=datetime.datetime.now())
 	end = DateField('End', validators=[validators.Required()], id='select_end', format='%m/%d/%Y', default=datetime.datetime.now() + datetime.timedelta(days=1))
 	submit = SubmitField('Let\'s Go!')
@@ -60,10 +64,12 @@ class SearchForm(Form):
 @app.route('/', methods=['GET', 'POST'])
 def home():
 	form = SearchForm()
+	form.cities.choices = [(city, city) for city in flight.get_cities_names()]
+	form.currency.choices = [(cur, cur) for cur in get_currency()]
 	if form.validate_on_submit():
 		if form.validate():
 			print('initial validation')
-			return redirect('/dashboard?start=' + form.start.data.strftime('%Y-%m-%dT00:00:00') + '&end=' + form.end.data.strftime('%Y-%m-%dT23:59:59'))
+			return redirect('/dashboard?origin=' + form.cities.data + '&start=' + form.start.data.strftime('%Y-%m-%dT00:00:00') + '&end=' + form.end.data.strftime('%Y-%m-%dT23:59:59'))
 		else:
 			flash("Please make sure your budget is above $0.00 and your start date is before your end date.", category='red')
 	return render_template('index.html', form=form)
@@ -72,7 +78,7 @@ def home():
 def dash():
 	start = request.args.get('start')
 	end = request.args.get('end')
-	locations = getLocations()
+	locations = flight.get_cities_names()
 	dashdata = list()
 	for location in locations:
 		events = get_events(location, start, end).json()
