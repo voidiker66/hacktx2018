@@ -55,7 +55,7 @@ Events
 					<tr class="content-center">
 						{% for event in data['events'][index-1]['events']  %}
 							{% if loop.index < 5 %}
-								<td><img class="itin-pic rounded" src="{{event['logo']['original']['url']}}"></td>
+								<td><img class="itin-pic rounded" src="{{event['logo']['url']}}"></td>
 							{% endif %}
 						{% endfor %}
 					</tr>

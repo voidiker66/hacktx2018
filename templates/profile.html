@@ -28,7 +28,7 @@ Profile
 <div class="flex w-full justify-around pt-8">
 	<div class="w-1/4 pt-16 pl-8 text-center">
 		<div class="pt-12">
-			<img style="width: 100px; height: 100px; border-radius: 50px; background-color: lightblue; border: solid darkblue 2px;" src="{{ url_for('static', filename='images/Blank-profile.png') }}">
+			<img style="width: 100px; height: 100px; border-radius: 50px; background-color: lightblue; border: solid darkblue 2px;" src="{{ url_for('static', filename='images/mark.png') }}">
 			<p>
 				<h2 class="capitalize">{{ current_user.firstname }} {{ current_user.lastname }}</h2>
 				<h4><i>Platinum Member</i></h4>
@@ -38,7 +38,7 @@ Profile
 				</div>
 			</p>
 			<div>
-				<input type="submit" name="book_new" value="Book New Flight" class="uppercase bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded"/>
+				<input type="submit" name="book_new" value="Book New Flight" class="uppercase bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded" onclick="window.location.href = '/';" />
 			</div>
 		</div>
 	</div>

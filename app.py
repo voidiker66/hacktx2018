@@ -251,21 +251,24 @@ def dash():
 	dend = airlines.datetime_parser(end)
 	td = dend - dstart
 	duration = td.days """
-	dest = {}
 	for key,value in locations.items():
 		if key != origin:
+			dest = {}
 			dest['name'] = value['city']
-			dest['events'] = get_events(value['city'], start, end).json()
+			# dest['events'] = get_events(value['city'], start, end).json()
 			dest['code'] = value['code']
 			airprice = airlines.get_flight_average_cost(origin, dest['name'], start, end, 1)
-			hotelprice = get_hotel_avg(os.getenv("AMADEUS_KEY", ""),dest['code'],start,end)
+			hotelprice = get_hotel_avg("rBYxMyKDkSqumoGZthxpnBZyHbwSTd0o",dest['code'],start,end)
 			eventprice = 0
 			for cities in COL:
 				if cities.name == dest['code']:
 					eventprice = 0.5 * cities.value
-			dest['price'] = airprice + hotelprice + eventprice
+			dest['price'] = "{0:.2f}".format((airprice + hotelprice + eventprice))
 			dashdata.append(dest)
-	return render_template('dashboard.html', data=dashdata)
+	dashdata = sorted(dashdata, key=lambda x: x['price'])
+	for c in dashdata:
+		print(c['name'])
+	return render_template('dashboard.html', data=dashdata, start=start, end=end, origin=origin)
 
 @app.route('/confirm')
 def confirm():
