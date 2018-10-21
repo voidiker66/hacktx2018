@@ -132,6 +132,7 @@ def signup():
 			user = User(form.username.data, form.firstname.data, form.lastname.data, form.email.data, form.password.data)
 			db.session.add(user)
 			db.session.commit()
+			airlines.register_user(user.firstname, user.lastname, user.email)
 			flash("You're now registered!", category='green')
 			return redirect('/login')
 		else:
@@ -212,6 +213,8 @@ def profile():
 def events():
 	city_from = request.args.get('from')
 	city_to = request.args.get('to')
+	flight_origin = request.args.get('flight_origin')
+	flight_destination = request.args.get(flight_destination)
 	start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%dT%H:%M:%S')
 	end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%dT%H:%M:%S')
 	total_days = (end - start).days + 1
@@ -224,7 +227,7 @@ def events():
 		end_of_day = end_of_day + datetime.timedelta(days=1)
 		events[index] = get_events(city_to, str(start_of_day), str(end_of_day)).json()
 	events[total_days - 1] = get_events(city_to, str(start_of_day + datetime.timedelta(days=1)), str(end)).json()
-	data = {'city_from': city_from, 'city_to': city_to, 'start': start, 'end': end, 'total_days': total_days, 'events': events}
+	data = {'city_from': city_from, 'city_to': city_to, 'start': start, 'end': end, 'total_days': total_days, 'events': events, 'flight_origin': flight_origin, 'flight_destination': flight_destination}
 	return render_template('events.html', data=data)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -272,6 +275,9 @@ def dash():
 
 @app.route('/confirm')
 def confirm():
+	flight_origin = request.args.get('flight_origin')
+	flight_destination = request.args.get('flight_destination')
+	airlines.reserve_trip(airlines.get_user_id(current_user.email), flight_origin, flight_destination)
 	return render_template('confirm.html')
 
 @app.route('/flight')

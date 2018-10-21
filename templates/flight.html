@@ -70,7 +70,7 @@ Flights
     <tr>
       <td style="padding: 0px 10px">
         <input type="radio" name="start" class="arrival" value="{{ flight['arrivalTime'] }}"
-         onselect="disableTable({{ flight['arrivalTime'] }})">
+         onselect="disableTable({{ flight['arrivalTime'] }})" data-flightid="{{flight['flightNumber']}}">
       </td>
       <td>{{ flight['flightNumber'] }}</td>
 	  <td>{{ flight['departureTime'] }}</td>
@@ -139,7 +139,7 @@ Flights
     {% for flight in retFlights %}
     <tr>
       <td style="padding: 0px 10px">
-        <input type="radio" name="end" class="departure" value="{{ flight['departureTime'] }}">
+        <input type="radio" name="end" class="departure" value="{{ flight['departureTime'] }}" data-flightid="{{flight['flightNumber']}}">
       </td>
       <td>{{ flight['flightNumber'] }}</td>
 	  <td>{{ flight['departureTime'] }}</td>
@@ -175,7 +175,7 @@ Flights
   <input type="submit" name="btn-submit" id="btn-submit" value="Next"/ class="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded cursor-pointer disabled">
   <script type="text/javascript">
     $('#btn-submit').click(function() {
-      window.location.href = "/events?from={{origin}}&to={{destination}}&start=" + $("input[name='start']:checked").val().replace(' ', 'T') + ':00' + "&end=" + $("input[name='end']:checked").val().replace(' ', 'T') + ':00';
+      window.location.href = "/events?from={{origin}}&to={{destination}}&start=" + $("input[name='start']:checked").val().replace(' ', 'T') + ':00' + "&end=" + $("input[name='end']:checked").val().replace(' ', 'T') + ':00&flight_origin=' + $("input[name='start']:checked").data('flightid') + '&flight_destination=' + $("input[name='end']:checked").data('flightid');
     });
   </script>
 </div>

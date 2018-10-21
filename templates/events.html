@@ -68,7 +68,7 @@ Events
 	<input type="submit" name="itinerary" value="BOOK TICKETS" id="itinerary"  class="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded cursor-pointer" />
 	<script type="text/javascript">
 		$('#itinerary').click(function(e) {
-			window.location.href = '/confirm';
+			window.location.href = '/confirm?flight_origin={{flight_origin}}&flight_destination={{flight_destination}}';
 		});
 	</script>
 </div>
