@@ -5,17 +5,21 @@
   #titleId{
     color: #5C5C5C !important;
   }
-  #destFlights{
+/*  #destFlights{
     background: #f4f4f4;
     border-radius: 4px;
     padding: 20px;
     color: #797979;
     font-size: 25px;
     text-align: center;
-    margin-left: 3%;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
     width: 700px;
-  }
+  }*/
   #destTable {
+    margin-top: 20px;
+    border-spacing: 10px 10px;
     width: 100%;
   }
   #destTable td {
@@ -26,17 +30,10 @@
   #destTable th {
     padding: 5px 0px 12px;
   }
-  #retFlights{
-    background: #f4f4f4;
-    border-radius: 4px;
-    padding: 20px;
-    color: #797979;
-    font-size: 25px;
-    text-align: center;
-    margin-left: 53%;
-    width: 700px;
-  }
+
   #retTable {
+    margin-top: 20px;
+    border-spacing: 10px 10px;
     width: 100%;
   }
   #retTable td {
@@ -49,9 +46,25 @@
   }
 </style>
 
-<form action="" method="post" enctype="multipart/form-data">
-<div id="destFlights" class="flex">
-  <h2 style="text-align:center">Departure Flight</h2>
+<style type="text/css">
+    a div span, nav div div a, nav div div span {
+        color: #000000 !important;
+    }
+    nav div div a {
+        border-color: #000000 !important;
+    }
+    nav div div a:hover {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+    nav {
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="items-stretch justify-around pt-16">
+  <div id="destFlights" class="dreamer-main-content w-2/5 px-4 pb-4 mx-auto">
+  <h2 class="text-center pt-2">Outgoing Flight</h2>
   {% if flights %}
   <table id='destTable'>
     <tr>
@@ -64,7 +77,7 @@
     {% for flight in flights %}
     <tr>
       <td style="padding: 0px 10px">
-        <input type="radio" name="pickDest" value="{{ flight | tojson | safe }}"
+        <input type="radio" name="start" class="arrival" value="{{ flight['arrivalTime'] }}"
          onselect="disableTable({{ flight['arrivalTime'] }})">
       </td>
       <td>{{ flight['flightNumber'] }}</td>
@@ -114,11 +127,14 @@
            rows[i].parentNode.insertBefore(rows[min], rows[i]);
       }
     }
+    $('.arrival').change(function() {
+        $('#retFlights').toggleClass('disabled');
+    });
   </script>
 </div>
 
-<div id="retFlights">
-  <h2 style="text-align:center">Departure Flight</h2>
+<div id="retFlights" class="dreamer-main-content w-2/5 px-4 pb-4 disabled mx-auto">
+  <h2 class="text-center pt-2">Incoming Flight</h2>
   {% if retFlights %}
   <table id='retTable'>
     <tr>
@@ -131,7 +147,7 @@
     {% for flight in retFlights %}
     <tr>
       <td style="padding: 0px 10px">
-        <input type="radio" name="retDest" value="{{ flight | tojson | safe }}">
+        <input type="radio" name="end" class="departure" value="{{ flight['departureTime'] }}">
       </td>
       <td>{{ flight['flightNumber'] }}</td>
 	  <td>{{ flight['departureTime'] }}</td>
@@ -157,7 +173,21 @@
         }
       }
     }
+    $('.departure').change(function() {
+        $('#btn-submit').toggleClass('disabled');
+    });
   </script>
+</div>
+
+<div class="text-center mr-4 pt-8">
+  <input type="submit" name="btn-submit" id="btn-submit" value="Next"/ class="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded cursor-pointer disabled">
+  <script type="text/javascript">
+    $('#btn-submit').click(function() {
+      window.location.href = "/events?from={{origin}}&to={{destination}}&start=" + $("input[name='start']:checked").val().replace(' ', 'T') + ':00' + "&end=" + $("input[name='end']:checked").val().replace(' ', 'T') + ':00';
+    });
+  </script>
+</div>
+
 </div>
 </form>
 {% endblock %}
