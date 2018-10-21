@@ -151,8 +151,8 @@ def time_utc_to_english(time):
 
 def get_events(location, start, end):
 	return requests.get(
-	    "https://www.eventbriteapi.com/v3/events/search?sort_by=best&location.address=" + location
-	    + '&start_date.range_start=' + start + '&start_date.range_end=' + end,
+	    "https://www.eventbriteapi.com/v3/events/search?sort_by=date&location.address=" + location
+	    + '&start_date.range_start=' + start.replace(' ', 'T') + '&start_date.range_end=' + end.replace(' ', 'T'),
 	    headers = {
 	        "Authorization": "Bearer 7PW4452MWTLYVZVWNH3K",
 	    },
@@ -177,6 +177,30 @@ class SearchForm(Form):
 				return False
 			return True
 		return False
+
+@app.route('/profile')
+@login_required
+def profile():
+	return render_template('profile.html')
+
+@app.route('/events')
+def events():
+	city_from = request.args.get('from')
+	city_to = request.args.get('to')
+	start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%dT%H:%M:%S')
+	end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%dT%H:%M:%S')
+	total_days = (end - start).days + 1
+	events = dict()
+	start_of_day = start.replace(hour=0, minute=0, second=0)
+	end_of_day = start.replace(hour=23, minute=59, second=59)
+	events[0] = get_events(city_to, str(start), str(end_of_day)).json()
+	for index in range(1, total_days-1):
+		start_of_day = start_of_day + datetime.timedelta(days=1)
+		end_of_day = end_of_day + datetime.timedelta(days=1)
+		events[index] = get_events(city_to, str(start_of_day), str(end_of_day)).json()
+	events[total_days - 1] = get_events(city_to, str(start_of_day + datetime.timedelta(days=1)), str(end)).json()
+	data = {'city_from': city_from, 'city_to': city_to, 'start': start, 'end': end, 'total_days': total_days, 'events': events}
+	return render_template('events.html', data=data)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -213,10 +237,6 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 login_manager.init_app(app)
-
-manager = APIManager(app, flask_sqlalchemy_db=db)
-manager.create_api(User, methods=['GET'],results_per_page=10)
-
 
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", debug=True)

@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+	a div span, nav div div a, nav div div span {
+		color: #000000 !important;
+	}
+	nav div div a {
+		border-color: #000000 !important;
+	}
+	nav div div a:hover {
+		background-color: #000000 !important;
+		color: #ffffff !important;
+	}
+	nav {
+		margin-bottom: 30px;
+	}
+</style>
+
+<link href="{{ url_for('static', filename='jqvmap.css') }}" media="screen" rel="stylesheet" type="text/css"/>
+<script src="{{ url_for('static', filename='jquery.vmap.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.vmap.world.js') }}"></script>
+
+<div class="flex w-full justify-around pt-8">
+	<div class="w-1/4 pt-16 pl-8 text-center">
+		<div class="pt-12">
+			<img style="width: 100px; height: 100px; border-radius: 50px; background-color: lightblue; border: solid darkblue 2px;" src="{{ url_for('static', filename='images/Blank-profile.png') }}">
+			<p>
+				<h2 class="capitalize">{{ current_user.firstname }} {{ current_user.lastname }}</h2>
+				<h4><i>Platinum Member</i></h4>
+				<div class="inline-flex p-4">
+					<div class="fa-lg ml-8 mr-2"><i class="fas fa-map-marker-alt"></i></div>
+					<div class="w-1/2 text-xs">Drag icon to add location to wishlist</div>
+				</div>
+			</p>
+			<div>
+				<input type="submit" name="book_new" value="Book New Flight" class="uppercase bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded"/>
+			</div>
+		</div>
+	</div>
+	<div id="vmap" class="absolute pt-16" style="width: 100%; height: 600px;"></div>
+</div>
+<div class="w-full flex">
+	<div class="w-1/4 dreamer-main-content p-4 ml-8 mt-4">
+		<table class="w-5/6">
+			<tr>
+				<td>Flyer Miles</td>
+			</tr>
+			<tr>
+				<td><input type="text" name="miles" value="10.572" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none" readonly/></td>
+			</tr>
+			<tr>
+				<td>Meal Preference</td>
+			</tr>
+			<tr>
+				<td>
+					<select name="meal" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none">
+						<option>
+							Vegetarian
+						</option>
+						<option>
+							Vegan
+						</option>
+						<option>
+							No Restrictions
+						</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Travel Preference</td>
+			</tr>
+			<tr>
+				<td>
+					<select name="travel" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none">
+						<option>
+							Economy
+						</option>
+						<option>
+							Business
+						</option>
+						<option>
+							First Class
+						</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Music Preference</td>
+			</tr>
+			<tr>
+				<td>
+					<select name="music" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none">
+						<option>
+							Rock &amp; Roll
+						</option>
+						<option>
+							Classical
+						</option>
+						<option>
+							Jazz
+						</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="w-1/2 dreamer-main-content p-4 mt-4 ml-16">
+		<table class="m-4">
+			<tr class="h-16">
+				<th class="w-1/5">Upcoming Flights</th>
+				<th class="text-blue w-1/5">Travel History</th>
+				<th class="w-1/5">Travel Statistics</th>
+				<th class="w-1/5">Upcoming Deals</th>
+			</tr>
+			<table class="bg-white w-full align-top">
+				<th class="w-1/5">
+					About
+				</th>
+				<th class="w-1/5">
+					Days
+				</th>
+				<th class="w-1/5">
+					Purpose
+				</th>
+				<th class="w-1/5">
+					Trip Satisfaction
+				</th>
+				<tr class="border-grey-dark m-4 text-center">
+					<td class="text-sm w-1/5">
+						New York - New Dheli
+					</td>
+					<td class="text-sm w-1/5">
+						43 Days
+					</td>
+					<td class="text-sm w-1/5">
+						Business
+					</td>
+					<td class="text-sm w-1/5">
+						70%
+					</td>
+				</tr>
+				<tr class="border-grey-dark m-4 text-center">
+					<td class="text-sm w-1/5">
+						New York - New Dheli
+					</td>
+					<td class="text-sm w-1/5">
+						43 Days
+					</td>
+					<td class="text-sm w-1/5">
+						Business
+					</td>
+					<td class="text-sm w-1/5">
+						70%
+					</td>
+				</tr>
+				<tr class="border-grey-dark m-4 text-center">
+					<td class="text-sm w-1/5">
+						New York - New Dheli
+					</td>
+					<td class="text-sm w-1/5">
+						43 Days
+					</td>
+					<td class="text-sm w-1/5">
+						Business
+					</td>
+					<td class="text-sm w-1/5">
+						70%
+					</td>
+				</tr>
+			</table>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		jQuery('#vmap').vectorMap({
+		          map: 'world_en',
+		          backgroundColor: 'transparent',
+		          color: '#8795a1',
+		          hoverOpacity: 0.7,
+		          selectedColor: '#666666',
+		          enableZoom: false,
+		          showTooltip: true,
+		          scaleColors: ['#C8EEFF', '#006491'],
+		          values: {"us":16.63, "jp":9.8, "kr":9.8, "it":9.8, "de":9.8, "ie":9.8, "gb":9.8, "es":9.8},
+		          normalizeFunction: 'polynomial'
+		});
+	});
+</script>
+
+
+{% endblock %}

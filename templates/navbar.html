@@ -7,7 +7,7 @@
     </div>
   </a>
   <div class="block lg:hidden">
-    <button class="flex items-center px-3 py-2 border rounded text-white border-teal-light hover:text-white hover:border-white">
+    <button class="flex items-center px-3 py-2 border rounded text-white border-black-light hover:text-white hover:border-white">
       <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
     </button>
   </div>
@@ -15,14 +15,15 @@
     {% if current_user.is_authenticated %}
     <div class="flex items-center flex-no-shrink text-white mr-6 ml-8 mt-2 text-right w-full">
       <span class="text-sm px-4 py-2 leading-none text-white font-semibold tracking-tight">Welcome, {{ current_user.firstname }}!</span>
-      <a href="/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal hover:bg-white mt-4 lg:mt-0">Logout</a>
+      <a href="/profile" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-black hover:bg-white mt-4 lg:mt-0 mx-4">Profile</a>
+      <a href="/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-black hover:bg-white mt-4 lg:mt-0 mx-4">Logout</a>
     </div>
     {% else %}
     <div class="">
-      <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal hover:bg-white mt-4 lg:mt-0 mx-4">Login</a>
+      <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-black hover:bg-white mt-4 lg:mt-0 mx-4 no-underline">Login</a>
     </div>
     <div class="">
-      <a href="/signup" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal hover:bg-white mt-4 lg:mt-0 mx-4">Signup</a>
+      <a href="/signup" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-black hover:bg-white mt-4 lg:mt-0 mx-4 no-underline">Signup</a>
     </div>
     {% endif %}
   </div>
