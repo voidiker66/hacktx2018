@@ -75,10 +75,6 @@ td {
 	font-size: 20px;
 }
 
-h1, h3 {
-	color: #ffffff;
-}
-
 .logo {
 	width: 30px;
 	height: 30px;
@@ -131,7 +127,7 @@ body {
 }
 
 .dreamer-main-content {
-	background-color : #f3f3f3
+	background-color: #f3f3f3 !important;
 }
 
 li {

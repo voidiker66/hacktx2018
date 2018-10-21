@@ -212,10 +212,6 @@ def page_not_found(e):
 
 login_manager.init_app(app)
 
-manager = APIManager(app, flask_sqlalchemy_db=db)
-manager.create_api(User, methods=['GET'],results_per_page=10)
-
-
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", debug=True)
 	#app.run(host='0.0.0.0', port=80)
