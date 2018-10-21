@@ -226,6 +226,10 @@ def dash():
 		dashdata.append(events)
 	return render_template('dashboard.html', data=dashdata)
 
+@app.route('/confirm')
+def confirm():
+	return render_template('confirm.html')
+
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
