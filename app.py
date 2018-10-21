@@ -267,22 +267,22 @@ def dash():
 			dashdata.append(dest)
 	return render_template('dashboard.html', data=dashdata)
 
+@app.route('/confirm')
+def confirm():
+	return render_template('confirm.html')
+
 @app.route('/flight')
 def flight():
         origin = request.args.get('origin')
         destination = request.args.get('destination')
         start_date = request.args.get('start')
         end_date = request.args.get('end')
-        return render_template('flight.html', flights= \
+        return render_template('flight.html', origin=origin, destination=destination, flights= \
             airlines.get_flights_view(airlines.get_dest_flights( \
             origin=origin, destination=destination, start_date=start_date, \
             end_date=end_date)), retFlights=airlines.get_flights_view( \
             airlines.get_return_flights(origin=origin, destination=destination, \
-            start_date=start_date, end_date=end_date)))
-
-@app.route('/confirm')
-def confirm():
-	return render_template('confirm.html')
+				start_date=start_date, end_date=end_date)))
 
 
 @login_manager.unauthorized_handler

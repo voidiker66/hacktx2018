@@ -45,6 +45,10 @@
 	padding-bottom: 100px; /* height of your footer */
 }
 
+.disabled {
+	display: none;
+}
+
 
 .dream-header {
 	background-image: url("/static/images/LandingImage.png");
