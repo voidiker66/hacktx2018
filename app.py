@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, \
 	 check_password_hash
 import datetime
 from sqlalchemy import create_engine
+from flask_restless import APIManager
 #from wtforms.validators import Required
 from werkzeug.utils import secure_filename
 import os
@@ -15,6 +16,7 @@ import uuid
 
 import requests
 import datetime
+import copy
 
 import airlines
 
