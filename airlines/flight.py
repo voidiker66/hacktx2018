@@ -31,6 +31,7 @@ def datetime_to_cststring(datetime):
 ##########################################################################
 
 def get_flights(origin_code, destination_code, date):
+    print(origin_code, destination_code, date)
     if not origin_code in apt.AIRPORTS.__members__:
         raise ValueError("origin is not a valid airport code.")
     if not destination_code in apt.AIRPORTS.__members__:
@@ -42,7 +43,8 @@ def get_flights(origin_code, destination_code, date):
         print(origin_code)
         print(destination_code)
         print(r.text)
-        raise ValueError("failed to get flights.")
+        # raise ValueError("failed to get flights.")
+        return {}
     return r.json()
 
 def get_dest_flights(origin, destination, start_date,
@@ -152,11 +154,13 @@ def get_flight_average_cost(origin, destination, start_date,
     flightd = get_dest_flights(origin, destination, start_date,
         end_date, count_limit)
     flightview = get_flights_view(flightd)
+    if not len(flightview):
+        return -1e6
     costd = 0
     for flight in flightview:
         costd += float(flight['cost'])
     costd = costd/len(flightview)
-    flightview = get_dest_flights(origin, destination, start_date, end_date, count_limit)
+    flightview = get_return_flights(origin, destination, start_date, end_date, count_limit)
     costa = 0
     for flight in flightview:
         costa += float(flight['cost'])
