@@ -1,6 +1,5 @@
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user, UserMixin
 from flask import Flask,jsonify,request,render_template,Response,flash,redirect,url_for
-from flask_restless import APIManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf import Form
