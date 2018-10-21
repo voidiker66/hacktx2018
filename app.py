@@ -211,6 +211,7 @@ def profile():
 	return render_template('profile.html', data=user_trips)
 
 @app.route('/events')
+@login_required
 def events():
 	city_from = request.args.get('from')
 	city_to = request.args.get('to')
@@ -245,6 +246,7 @@ def home():
 	return render_template('index.html', form=form)
 
 @app.route('/dashboard')
+@login_required
 def dash():
 	origin = request.args.get('origin')
 	start = request.args.get('start')
@@ -275,6 +277,7 @@ def dash():
 	return render_template('dashboard.html', data=dashdata, start=start, end=end, origin=origin)
 
 @app.route('/confirm')
+@login_required
 def confirm():
 	flight_origin = request.args.get('flight_origin')
 	flight_destination = request.args.get('flight_destination')
@@ -282,6 +285,7 @@ def confirm():
 	return render_template('confirm.html')
 
 @app.route('/flight')
+@login_required
 def flight():
         origin = request.args.get('origin')
         destination = request.args.get('destination')
