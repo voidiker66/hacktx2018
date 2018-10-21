@@ -13,6 +13,7 @@ from flask_restless import APIManager
 from werkzeug.utils import secure_filename
 import os
 import uuid
+import enum
 
 import requests
 import datetime
@@ -159,6 +160,30 @@ def get_events(location, start, end):
 	    verify = True,  # Verify SSL certificate
 	)
 
+class COL(enum.Enum):
+    DFW = 157
+    LAX = 201
+    MIA = 185
+    PHL = 175
+    ORD = 189
+    JFK = 235
+    LHR = 227
+    HKG = 226
+
+def getHotels(apikey, airportCode, checkIn, checkOut):
+    payload = {'apikey': apikey, 'location': airportCode, 'check_in': checkIn, 'check_out': checkOut}
+    r = requests.get("https://api.sandbox.amadeus.com/v1.2/hotels/search-airport", params=payload)
+    r = r.json()
+    return(r['results'])
+
+def get_hotel_avg(apikey, airportCode, checkIn, checkOut):
+	hotels = getHotels(apikey, airportCode, checkIn, checkOut)
+	hotelavg = 0
+	for i in range(len(hotels)-1):
+		hotelavg += float(hotels[i]['total_price']['amount'])
+	hotelavg /= 10
+	return hotelavg
+
 
 class SearchForm(Form):
 	budget = TextField('Budget', [validators.Required()], id='select_budget')
@@ -210,20 +235,36 @@ def home():
 	if form.validate_on_submit():
 		if form.validate():
 			print('initial validation')
-			return redirect('/dashboard?origin=' + form.cities.data + '&start=' + form.start.data.strftime('%Y-%m-%dT00:00:00') + '&end=' + form.end.data.strftime('%Y-%m-%dT23:59:59'))
+			return redirect('/dashboard?origin=' + form.cities.data + '&start=' + form.start.data.strftime('%Y-%m-%dT00:00:00') + '&end=' + form.end.data.strftime('%Y-%m-%dT23:59:59') + '&budget=' + form.budget.data)
 		else:
 			flash("Please make sure your budget is above $0.00 and your start date is before your end date.", category='red')
 	return render_template('index.html', form=form)
 
 @app.route('/dashboard')
 def dash():
+	origin = request.args.get('origin')
 	start = request.args.get('start')
 	end = request.args.get('end')
-	locations = airlines.get_cities_names()
+	locations = airlines.get_cities()
 	dashdata = list()
-	for location in locations:
-		events = get_events(location, start, end).json()
-		dashdata.append(events)
+	""" dstart = airlines.datetime_parser(start)
+	dend = airlines.datetime_parser(end)
+	td = dend - dstart
+	duration = td.days """
+	dest = {}
+	for key,value in locations.items():
+		if key != origin:
+			dest['name'] = value['city']
+			dest['events'] = get_events(value['city'], start, end).json()
+			dest['code'] = value['code']
+			airprice = airlines.get_flight_average_cost(origin, dest['name'], start, end, 1)
+			hotelprice = get_hotel_avg(os.getenv("AMADEUS_KEY", ""),dest['code'],start,end)
+			eventprice = 0
+			for cities in COL:
+				if cities.name == dest['code']:
+					eventprice = 0.5 * cities.value
+			dest['price'] = airprice + hotelprice + eventprice
+			dashdata.append(dest)
 	return render_template('dashboard.html', data=dashdata)
 
 @app.route('/flight')

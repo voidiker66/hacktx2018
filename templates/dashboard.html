@@ -21,28 +21,17 @@ Home
 	}
 </style>
 {% block content %}
-
-{% for item in data %}
-	<div class="location-container items-stretch pt-16">
-		<h3>{{ item['location']['augmented_location']['city'] }}, {{ item['location']['augmented_location']['country'] }}</h3>
+{% for i in data %}
+	<div class="location-container">
+		<h3>{{ data['name'] }}</h3>
 		<p>
-			{% if item['events']|length > 5 %}
-				{% for index in range(5) %}
-					<ul>
-						<li>
-							{{ item['events'][index]['name']['text'] }}
-						</li>
-					</ul>
-				{% endfor %}
-			{% else %}
-				{% for event in item['events'] %}
-					<ul>
-						<li>
-							{{ event['name']['text'] }}
-						</li>
-					</ul>
-				{% endfor %}
-			{% endif %}
+			{% for event in item['events'] %}
+				<ul>
+					<li>
+						{{ item['events'] }}
+					</li>
+				</ul>
+			{% endfor %}
 		</p>
 	</div>
 {% endfor %}

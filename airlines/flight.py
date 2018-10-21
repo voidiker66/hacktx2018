@@ -39,6 +39,9 @@ def get_flights(origin_code, destination_code, date):
         + origin_code + "&destination=" + destination_code + "&date="
         + date)
     if r.status_code != 200:
+        print(origin_code)
+        print(destination_code)
+        print(r.text)
         raise ValueError("failed to get flights.")
     return r.json()
 
@@ -144,3 +147,19 @@ def get_flights_view(flights):
             .strftime('%Y-%m-%d')
         flights_view.append(flight_view)
     return flights_view
+
+def get_flight_average_cost(origin, destination, start_date,
+        end_date, count_limit=10):
+    flightd = get_dest_flights(origin, destination, start_date,
+        end_date, count_limit)
+    flightview = get_flights_view(flightd)
+    costd = 0
+    for flight in flightview:
+        costd += float(flight['cost'])
+    costd = costd/len(flightview)
+    flightview = get_dest_flights(origin, destination, start_date, end_date, count_limit)
+    costa = 0
+    for flight in flightview:
+        costa += float(flight['cost'])
+    costa = costa/len(flightview)
+    return (costd + costa)/2
