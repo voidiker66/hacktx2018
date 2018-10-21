@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+Events
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+	a div span, nav div div a, nav div div span {
+		color: #000000 !important;
+	}
+	nav div div a {
+		border-color: #000000 !important;
+	}
+	nav div div a:hover {
+		background-color: #000000 !important;
+		color: #ffffff !important;
+	}
+	nav {
+		margin-bottom: 30px;
+	}
+</style>
+
+<div class="items-stretch flex justify-around pt-16">
+	<div class="w-2/5">
+		<div class="p-4">
+			<span class="text-black uppercase">{{ data['city_from'] }}</span> <i class="fas fa-exchange-alt"></i> <span class="text-black uppercase">{{ data['city_to'] }}</span>
+		</div>
+		<div class="dreamer-main-content w-full p-4">
+			<div class="w-full">
+				{% for index in range(1, data['total_days'] - 1) if data['events'][index-1]['events']|length > 0 %}
+					<h3 class="text-black">Day {{ index }}</h3>
+					<ul>
+						{% for event in data['events'][index-1]['events']  %}
+							{% if loop.index < 5 %}
+								<li>
+									<span class="w-1/3 text-xs"><strong>{{event['name']['text']}}</strong></span>
+									<span class="3/5 text-xs">{{event['start']['utc']}} - {{event['end']['utc']}}</span>
+								</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<div class="w-1/2">
+		<div class="p-4">
+			<span class="text-black uppercase">Itinerary</span>
+		</div>
+		<div class="dreamer-main-content w-full p-4">
+			<table>
+				{% for index in range(1, data['total_days'] - 1) if data['events'][index-1]['events']|length > 0 %}
+					<tr class="text-black"><td>Day {{ index }}</td></tr>
+					<tr class="content-center">
+						{% for event in data['events'][index-1]['events']  %}
+							{% if loop.index < 5 %}
+								<td><img class="itin-pic rounded" src="{{event['logo']['original']['url']}}"></td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+<div class="p-4 mr-4 float-right">
+	<input type="submit" name="itinerary" value="BOOK TICKETS" id="itinerary"  class="bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded" />
+	<script type="text/javascript">
+		$('#itinerary').click(function(e) {
+			console.log("we bought tickets");
+		});
+	</script>
+</div>
+<style type="text/css">
+	.itin-pic {
+		width: 120px !important;
+		height: 100px !important;
+	}
+
+	td {
+		padding: 10px !important;
+		border-bottom: none !important;
+	}
+</style>
+
+{% endblock %}

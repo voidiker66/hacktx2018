@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block body %}
+<div class="w-full max-w-xs mx-auto">
+    <form action="" method="post" novalidate class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+            <p>
+                {{ form.username.label(class_='block text-grey-darker text-sm font-bold') }}<br>
+                {{ form.username(size=32, class_='shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
+            </p>
+            <p>
+                {{ form.password.label(class_='block text-grey-darker text-sm font-bold') }}<br>
+                {{ form.password(size=32, class_='shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline mb-2') }}
+            </p>
+        </div>
+            
+        <div class="flex items-center justify-between">
+            {{ form.submit(class_='bg-blue hover:bg-blue-dark text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline')  }}
+            <a class="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker" href="#">
+                Forgot Password?
+            </a>
+        </div>
+    </form>
+    <p class="text-center text-grey text-xs">
+    ©2018 EvoLution. All rights reserved.
+  </p>
+</div>
+{% endblock %}
