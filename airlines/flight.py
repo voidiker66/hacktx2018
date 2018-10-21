@@ -112,8 +112,8 @@ def get_return_flights(origin, destination, start_date,
     iter_dt = end_dt - dt.timedelta(seconds=1)
     ###################################################################
 
-    origin_code = apt.get_airport_code(origin)
-    destination_code = apt.get_airport_code(destination)
+    origin_code = apt.get_airport_code(destination)
+    destination_code = apt.get_airport_code(origin)
     while current_dt < iter_dt and count_limit > 0:
         possible_flights = get_flights(origin_code, destination_code, \
             iter_dt.strftime("%Y-%m-%d"))

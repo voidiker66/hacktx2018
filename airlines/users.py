@@ -2,6 +2,8 @@ import requests
 import pymongo
 from bson.objectid import ObjectId
 
+from airlines.airport import get_airport
+
 def get_user(email):
     if not isinstance(email, str):
         return TypeError("email should be a string.")
@@ -47,12 +49,15 @@ def get_user_trips(user_id):
     col = db.reservation
     fli = db.flight
     cursor = col.find({"userId" : user_id})
-    reservations = []
+    reservations = {}
     for r in cursor:
         records = r['flightIds']
         cur_res = []
         for re in records:
             re = re.lstrip("[").rstrip("]")
-            cur_res.append(fli.find_one(ObjectId(re)))
-        reservations.append(cur_res)
+            trip = fli.find_one(ObjectId(re))
+            trip['origin'] = get_airport(trip['origin'])['city']
+            trip['destination'] = get_airport(trip['destination'])['city']
+            cur_res.append(trip)
+        reservations[r['recordLocator']] = cur_res
     return reservations
