@@ -5,10 +5,25 @@ Home
 {% endblock %}
 
 {% block body %}
+<style type="text/css">
+	a div span, nav div div a, nav div div span {
+		color: #000000 !important;
+	}
+	nav div div a {
+		border-color: #000000 !important;
+	}
+	nav div div a:hover {
+		background-color: #000000 !important;
+		color: #ffffff !important;
+	}
+	nav {
+		margin-bottom: 30px;
+	}
+</style>
 {% block content %}
 
 {% for item in data %}
-	<div class="location-container">
+	<div class="location-container items-stretch pt-16">
 		<h3>{{ item['location']['augmented_location']['city'] }}, {{ item['location']['augmented_location']['country'] }}</h3>
 		<p>
 			{% if item['events']|length > 5 %}

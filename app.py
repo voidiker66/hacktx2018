@@ -99,6 +99,22 @@ def flight():
             airlines.get_return_flights(origin=origin, destination=destination, \
             start_date=start_date, end_date=end_date)))
 
+@app.route('/confirm')
+def confirm():
+	return render_template('confirm.html')
+
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+	return redirect('/login')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+login_manager.init_app(app)
+
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", debug=True)
 	#app.run(host='0.0.0.0', port=80)
