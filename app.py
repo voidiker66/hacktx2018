@@ -84,6 +84,16 @@ def dash():
 		dashdata.append(events)
 	return render_template('dashboard.html', data=dashdata)
 
+@app.route('/flight')
+def flight():
+        origin = request.args.get('origin')
+        destination = request.args.get('destination')
+        start_date = request.args.get('start')
+        end_date = request.args.get('end')
+        return render_template('flight.html', flights= \
+            airlines.get_flights_view(airlines.get_dest_flights( \
+            origin=origin, destination=destination, start_date=start_date, \
+            end_date=end_date)))
 
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", debug=True)

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block body %}
+<style type="text/css">
+  #titleId{
+    color: #5C5C5C !important;
+  }
+  #destFlights{
+    background: #f4f4f4;
+    border-radius: 4px;
+    padding: 20px;
+    color: #797979;
+    font-size: 25px;
+    text-align: center;
+    transition: all 0.2s;
+    margin: 0 auto;
+    width: 600px;
+  }
+  #destTable tr:nth-child(even){
+    background: #fff;
+  }
+</style>
+
+<div id="destFlights">
+  {% if flights %}
+  <table id='destTable'>
+    <tr>
+      <th></th>
+	  <th onclick="sortTable(1)" style="cursor: pointer">Flight #</th>
+	  <th onclick="sortTable(2)" style="cursor: pointer">Departure</th>
+	  <th onclick="sortTable(3)" style="cursor: pointer">Arrival</th>
+	  <th onclick="sortTable(4)" style="cursor: pointer">Price</th>
+    </tr>
+    {% for flight in flights %}
+    <tr>
+      <td><input type="radio" name="pick" value="1"/></td>
+      <td>{{ flight['flightNumber'] }}</td>
+	  <td>{{ flight['departureTime'] }}</td>
+      <td>{{ flight['arrivalTime'] }}</td>
+      <td>{{ flight['cost'] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  
+  <script>
+    var dir = "asc";
+    var last = -1;
+    function sortTable(n) {
+      var table = document.getElementById("destTable");
+      var rows = table.rows;
+      var min;
+      if (n == last) {
+        if (dir == "asc")
+          dir = "desc";
+        else
+          dir = "asc";
+      } else {
+        dir = "asc";
+        last = n;
+      }
+      for (var i = 1; i < rows.length; i++) {
+        min = i;
+        var cur = rows[min].getElementsByTagName("td")[n];
+        for (var j = i + 1; j < rows.length; j++) {
+          var swi = rows[j].getElementsByTagName("td")[n];
+          if (dir == "asc") {
+          	if (cur.innerHTML.toLowerCase() > swi.innerHTML.toLowerCase()) {
+              min = j;
+              cur = swi;
+            }
+          } else {
+          	if (cur.innerHTML.toLowerCase() < swi.innerHTML.toLowerCase()) {
+              min = j;
+              cur = swi;
+            }
+		  }
+        }
+        if (min != i)
+           rows[i].parentNode.insertBefore(rows[min], rows[i]);
+      }
+    }
+  </script>
+  {% else %}
+  <h3>There are currently no destination flights.</h3>
+  {% endif %}
+</div>
+{% endblock %}
