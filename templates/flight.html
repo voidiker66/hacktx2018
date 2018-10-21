@@ -70,7 +70,7 @@ Flights
     <tr>
       <td style="padding: 0px 10px">
         <input type="radio" name="start" class="arrival" value="{{ flight['arrivalTime'] }}"
-         onselect="disableTable({{ flight['arrivalTime'] }})" data-flightid="{{flight['flightNumber']}}">
+         onselect="disableTable({{ flight['arrivalTime'] }})" data-flightid="{{flight['mongoid']}}">
       </td>
       <td>{{ flight['flightNumber'] }}</td>
 	  <td>{{ flight['departureTime'] }}</td>
@@ -139,7 +139,7 @@ Flights
     {% for flight in retFlights %}
     <tr>
       <td style="padding: 0px 10px">
-        <input type="radio" name="end" class="departure" value="{{ flight['departureTime'] }}" data-flightid="{{flight['flightNumber']}}">
+        <input type="radio" name="end" class="departure" value="{{ flight['departureTime'] }}" data-flightid="{{flight['mongoid']}}">
       </td>
       <td>{{ flight['flightNumber'] }}</td>
 	  <td>{{ flight['departureTime'] }}</td>
