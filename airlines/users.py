@@ -20,14 +20,11 @@ def register_user(first_name, last_name, email, gender="Other", aadv=None):
         return TypeError("email should be a string.")
     if not (gender == 'Male' or gender == 'Female' or gender == 'Other'):
         return ValueError("gender should be a string of one of the form: Male, Female, or Other")
-    data = {}
-    data['firstName'] = first_name
-    data['lastName'] = last_name
-    data['email'] = email
-    data['gender'] = gender
+    req_string = "?firstName=" + first_name + "&lastName=" + last_name + "&email=" + email + \
+            "&gender=" + gender
     if aadv:
-        data['aadvantageNumber'] = aadv
-    r = requests.post("https://mock-aa.herokuapp.com/user", json=data)
+        req_string += '&aadvantageNumber=' + aadv
+    r = requests.post("https://mock-aa.herokuapp.com/user" + req_string)
     if r.status_code == 400:
         print ("User could not be created: " + r.text)
     elif r.status_code != 200:
