@@ -1,0 +1,5 @@
+YapQ Geosearch
+
+API Key: rBYxMyKDkSqumoGZthxpnBZyHbwSTd0o
+
+/v1.2/points-of-interest/yapq-search-circle?apikey=rBYxMyKDkSqumoGZthxpnBZyHbwSTd0o&latitude=49.10&longitude=-123.11934&radius=42&lang=EN
