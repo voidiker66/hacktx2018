@@ -207,14 +207,15 @@ class SearchForm(Form):
 @app.route('/profile')
 @login_required
 def profile():
-	return render_template('profile.html')
+	user_trips = airlines.get_user_trips(current_user.email)
+	return render_template('profile.html', data=user_trips)
 
 @app.route('/events')
 def events():
 	city_from = request.args.get('from')
 	city_to = request.args.get('to')
 	flight_origin = request.args.get('flight_origin')
-	flight_destination = request.args.get(flight_destination)
+	flight_destination = request.args.get('flight_destination')
 	start = datetime.datetime.strptime(request.args.get('start'), '%Y-%m-%dT%H:%M:%S')
 	end = datetime.datetime.strptime(request.args.get('end'), '%Y-%m-%dT%H:%M:%S')
 	total_days = (end - start).days + 1
@@ -228,7 +229,7 @@ def events():
 		events[index] = get_events(city_to, str(start_of_day), str(end_of_day)).json()
 	events[total_days - 1] = get_events(city_to, str(start_of_day + datetime.timedelta(days=1)), str(end)).json()
 	data = {'city_from': city_from, 'city_to': city_to, 'start': start, 'end': end, 'total_days': total_days, 'events': events, 'flight_origin': flight_origin, 'flight_destination': flight_destination}
-	return render_template('events.html', data=data)
+	return render_template('events.html', data=data, flight_origin=flight_origin, flight_destination=flight_destination)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -301,7 +302,7 @@ def unauthorized_callback():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html')
 
 login_manager.init_app(app)
 
